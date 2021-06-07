@@ -2,3 +2,8 @@ language: node_js
 node_js: 
   - "stable"
   - node
+install:
+  - npm install
+script:
+  - npm test
+  - codecov -f coverage/*.json

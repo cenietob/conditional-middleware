@@ -15,11 +15,12 @@
   ],
   "scripts": {
     "test": "mocha",
-    "build": "tsc",
+    "build": "nyc tsc",
     "coverage": "nyc npm run test",
     "debug": "node --inspect -r ts-node/register --respawn --transpile-only src/index.ts",
     "benchmark": "node -r ts-node/register benchmark-script.ts",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "posttest": "nyc report --reporter=json"
   },
   "keywords": [
     "express",
@@ -38,6 +39,7 @@
     "ansi-to-html": "^0.6.15",
     "autocannon": "^7.3.0",
     "chai": "^4.2.0",
+    "codecov": "^3.8.2",
     "express": "^4.17.1",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0",
