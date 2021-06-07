@@ -1,5 +1,5 @@
 {
-  "name": "conditional-middleware",
+  "name": "condition-middleware",
   "version": "1.0.0",
   "description": "Conditional middleware",
   "main": "src/index.js",
@@ -13,12 +13,11 @@
     }
   ],
   "scripts": {
-    "start": "node -r ts-node/register src/index.ts",
+    "test": "mocha",
     "compile": "tsc",
     "coverage": "nyc npm run test",
     "debug": "node --inspect -r ts-node/register --respawn --transpile-only src/index.ts",
-    "benchmark": "node -r ts-node/register benchmark-script.ts",
-    "test": "mocha"
+    "benchmark": "node -r ts-node/register benchmark-script.ts"
   },
   "keywords": [
     "express",
