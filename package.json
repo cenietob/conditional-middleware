@@ -2,7 +2,7 @@
   "name": "condition-middleware",
   "version": "1.0.0",
   "description": "Conditional middleware",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "author": "Camilo Nieto <cenietob@gmail.com>",
   "license": "MIT",
   "deprecated": false,
