@@ -7,3 +7,9 @@ install:
 script:
   - npm test
   - codecov -f coverage/*.json
+deploy:
+  provider: npm
+  email: "cenietob@gmail.com"
+  api_key: "${NPM_API_KEY}"
+  on:
+    tags: true

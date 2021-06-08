@@ -4,10 +4,14 @@
 
 <p align=center>
 <a href="https://www.npmjs.com/package/condition-middleware"><img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/cenietob/conditional-middleware"></a>
+<a href="https://www.npmjs.com/package/conditional-middleware"><img alt="NPM version" src="https://img.shields.io/npm/v/conditional-middleware.svg?style=flat-square"></a>
+<a href="https://travis-ci.org/cenietob/conditional-middleware"><img alt="Build" src="https://travis-ci.org/cenietob/conditional-middleware.svg?branch=master"></a>
+<a href="https://codecov.io/github/cenietob/conditional-middleware?branch=master"><img alt="codecov.io" src="https://codecov.io/github/cenietob/conditional-middleware/coverage.svg?branch=master"></a>
+<a href="http://standardjs.com/"><img alt="js-standard-style" src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg"></a>
 </p>
 
 
-<h2>Instalation</h2>
+<h2>Installation</h2>
 
 ```
 $ npm install --save condition-middleware
