@@ -10,15 +10,15 @@ const testsFile = 'benchmark.md';
 const amountMiddlewares = 10;
 const portExpressTest = 3002;
 const autocannonOptions: Partial<autocannon.Options> = {
-  connections: 300,
-  pipelining: 20,
-  amount: 100000,
+  connections : 300,
+  pipelining  : 20,
+  amount      : 100000,
 
 };
 
 const app = express();
 
-const [first, second, ...rest] = new Array(amountMiddlewares).fill(
+const [ first, second, ...rest ] = new Array(amountMiddlewares).fill(
   (req, res, next) => {
     next();
   }
@@ -45,7 +45,7 @@ Writable.prototype._write = function (chunk, data, next) {
   appendToFile(convert.toHtml(unescape(chunk.toString('utf8'))));
   next();
 };
-var customStream = new Writable();
+const customStream = new Writable();
 
 (async () => {
   writeToFile(

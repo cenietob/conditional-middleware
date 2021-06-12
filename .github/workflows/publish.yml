@@ -1,0 +1,129 @@
+# Based on https://mitchellsimoens.com/2020/06/15/npm-publish-gpr/#build-job
+
+name: Publish Node.js Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - name: Zip lib & node_modules
+        run: zip -9qry "build.zip" "./" -i "node_modules/*" -i "lib/*"
+      - name: Upload build.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: build.zip
+          path: build.zip
+      - uses: codecov/codecov-action@v1
+        with:
+          files: coverage/*.json
+          name: codecov-conditional-middleware
+          fail_ci_if_error: true 
+          verbose: true 
+
+  release:
+    needs: build
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Download build.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: build.zip
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: Stuff happened
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build.zip
+          asset_name: build.zip
+          asset_content_type: application/zip
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production_environment
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Download build.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: build.zip
+      - name: Unzip build.zip
+        run: unzip -q build.zip
+      - run: npm publish 
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_API_KEY}}
+
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'cenietob'
+    environment: production_environment
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+          registry-url: https://npm.pkg.github.com/
+          scope: '@cenietob'
+      - name: Download build.zip
+        uses: actions/download-artifact@v2
+        with:
+          name: build.zip
+      - name: Unzip build.zip
+        run: unzip -q build.zip
+      - name: Store lowercase actor name
+        run: |
+          echo 'actor_name<<EOF' >> $GITHUB_ENV
+          echo ${{ github.actor }} | tr "A-Z" "a-z" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Store package name
+        run: |
+          echo 'package_name<<EOF' >> $GITHUB_ENV
+          grep -Po '"name": *\K"[^"]*"' package.json | grep -oP '"\K[^"\047]+(?=["\047])' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV  
+      - name: Update Package Name
+        run: |
+          sed -i 's,"name": "${{ env.package_name }}","name": "@${{ env.actor_name }}/${{ env.package_name }}",' package.json
+          cat package.json
+
+      - name: Update Publish Config
+        run: |
+          sed -i 's^registry-url^npm.pkg.github.com/@${{ env.actor_name }}^' package.json
+          cat package.json
+      - run: echo "registry=https://npm.pkg.github.com/@cenietob" >> .npmrc
+      - run: npm publish --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

@@ -1,11 +1,9 @@
 import { Request, RequestHandler } from 'express';
 
-type Middlewares = RequestHandler[][] | Record<string, RequestHandler[]>[];
-
 const errors = {
-  conditionFn: `Condition should be a function`,
-  errorMiddleware: "Error middleware can't be used",
-  middlewareFn: 'Middleware is not a function',
+  conditionFn     : `Condition should be a function`,
+  errorMiddleware : "Error middleware can't be used",
+  middlewareFn    : 'Middleware is not a function',
 };
 
 const isPlainObject = (o: any) =>
@@ -17,7 +15,7 @@ const isPlainObject = (o: any) =>
   );
 
 function selectMiddlewares(
-  middlewares: Middlewares,
+  middlewares: Middlewares<RequestHandler>,
   conditionResult: string | number | boolean | null
 ) {
   let middlewaresSelected: RequestHandler[] = [];
@@ -42,9 +40,9 @@ function selectMiddlewares(
 
 const conditional =
   (condition: (req: Request) => boolean | number | string) =>
-  (...middlewares: Middlewares): RequestHandler =>
+  (...middlewares: Middlewares<RequestHandler>): RequestHandler =>
     async function (req, res, next) {
-      let middlewaresBind: any[] = [];
+      const middlewaresBind: any[] = [];
       let conditionResult = null;
 
       try {
