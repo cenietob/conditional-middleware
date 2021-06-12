@@ -5,7 +5,7 @@ import request from 'supertest';
 
 import condition from '../src/index';
 
-describe('Run Middlewares By App Type Tests', function () {
+describe('Run Middlewares By App Type Tests', () => {
   let sandbox = sinon.createSandbox();
   let middleware1;
   let middleware2;
@@ -17,14 +17,13 @@ describe('Run Middlewares By App Type Tests', function () {
   let asyncMiddleware;
   let middlewareThrowsError;
 
-  const getAsyncTask = (time, name) => {
-    return new Promise((resolve, reject) => {
+  const getAsyncTask = (time, name) =>
+    new Promise((resolve, reject) => {
       setTimeout(() => {
         callOrder.push(name);
         resolve(null);
       }, time);
     });
-  };
 
   beforeEach('', () => {
     callOrder = [];
@@ -88,7 +87,7 @@ describe('Run Middlewares By App Type Tests', function () {
     return callback();
   };
 
-  it('When condition is not a function, then fail.', function (done) {
+  it('When condition is not a function, then fail.', (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
@@ -109,7 +108,7 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it(`When no middlewares are passed, then don't do anything.`, function (done) {
+  it("When no middlewares are passed, then don't do anything.", (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
@@ -129,11 +128,12 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it('When one middleware is passed, then use it independent of the condition.', function (done) {
+  it(`When one middleware is passed, then use it independent of the 
+    condition.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => false)([middleware2]),
+      condition(() => false)([ middleware2 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -150,11 +150,12 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it('When condition returns a boolean "true", then take the first array.', function (done) {
+  it(`When condition returns a boolean "true", then take the first 
+    array.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => true)([middleware1], [middleware2]),
+      condition(() => true)([ middleware1 ], [ middleware2 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -172,11 +173,12 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it('When condition returns a boolean "false", then take the second array.', function (done) {
+  it(`When condition returns a boolean "false", then take the second 
+    array.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => false)([middleware1], [middleware2]),
+      condition(() => false)([ middleware1 ], [ middleware2 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -195,11 +197,11 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When condition returns a number "i", then take the middlewares in the
-    passed in the argument "i".`, function (done) {
+    passed in the argument "i".`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => 2)([middleware1], [middleware2], [middleware3]),
+      condition(() => 2)([ middleware1 ], [ middleware2 ], [ middleware3 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -219,11 +221,11 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When not passed a list of middlewares or an object, then don't 
-    execute any middleware.`, function (done) {
+    execute any middleware.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => true)('test' as any, [middleware1]),
+      condition(() => true)('test' as any, [ middleware1 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -241,13 +243,13 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When an object is passed and the string returned in the condition is found 
-    in the object, then execute the middlewares in that key.`, function (done) {
+    in the object, then execute the middlewares in that key.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
       condition(() => 'testing')({
-        testing: [middleware1, middleware2],
-        not: [middleware3],
+        testing : [ middleware1, middleware2 ],
+        not     : [ middleware3 ],
       }),
       finalMiddleware,
       errorMiddleware
@@ -269,11 +271,11 @@ describe('Run Middlewares By App Type Tests', function () {
 
   it(`When an object is passed and the string returned in the condition is 
     not found in the object, then don't execute any middleware in the 
-    conditional.`, function (done) {
+    conditional.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => 'not-found')({ testing: [middleware1, middleware2] }),
+      condition(() => 'not-found')({ testing: [ middleware1, middleware2 ] }),
       finalMiddleware,
       errorMiddleware
     );
@@ -291,12 +293,12 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it(`When condition don't returns a number, a boolean or a string, then don't take any 
-    option.`, function (done) {
+  it(`When condition don't returns a number, a boolean or a string, then don't take 
+    any option.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => 'other')([middleware1], [middleware2], [middleware3]),
+      condition(() => 'other')([ middleware1 ], [ middleware2 ], [ middleware3 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -315,11 +317,12 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it(`When one of the middlewares selected is an "error middleware", then fail.`, function (done) {
+  it(`When one of the middlewares selected is an "error middleware", 
+    then fail`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => 0)([errorMiddleware], [middleware2], [middleware3]),
+      condition(() => 0)([ errorMiddleware ], [ middleware2 ], [ middleware3 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -338,14 +341,15 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it(`When one of the middlewares selected is not a function. then fail.`, function (done) {
+  it(`When one of the middlewares selected is not a function, 
+    then fail.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
       condition(() => 0)(
-        [{ anything: 'here' } as any],
-        [middleware2],
-        [middleware3]
+        [ { anything: 'here' } as any ],
+        [ middleware2 ],
+        [ middleware3 ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -366,11 +370,11 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When multiples middlewares are executed, then execute them in the order 
-    that are added.`, function (done) {
+    that are added.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
-      condition(() => true)([middleware2, middleware1], [middleware3]),
+      condition(() => true)([ middleware2, middleware1 ], [ middleware3 ]),
       finalMiddleware,
       errorMiddleware
     );
@@ -389,21 +393,21 @@ describe('Run Middlewares By App Type Tests', function () {
               'initialMiddleware',
               'middleware2',
               'middleware1',
-              'finalMiddleware',
+              'finalMiddleware'
             ]);
           chai.expect(res.status).to.be.eql(200);
         }, done)
       );
   });
 
-  it(`When one of the middlewares perform a long operation, then wait until finish to 
-    execute the rest of the middlewares.`, function (done) {
+  it(`When one of the middlewares perform a long operation, then wait until finish 
+    to execute the rest of the middlewares.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
       condition(() => true)(
-        [middleware2, asyncMiddleware, middleware1],
-        [middleware3]
+        [ middleware2, asyncMiddleware, middleware1 ],
+        [ middleware3 ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -426,7 +430,7 @@ describe('Run Middlewares By App Type Tests', function () {
               'asyncMiddleware - start',
               'asyncMiddleware - end',
               'middleware1',
-              'finalMiddleware',
+              'finalMiddleware'
             ]);
           chai.expect(res.status).to.be.eql(200);
         }, done)
@@ -434,13 +438,13 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When one of the middlewares selected throws an error, then capture it and pass 
-    to the error middleware and don't call next middlewares.`, function (done) {
+    to the error middleware and don't call next middlewares.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
       condition(() => true)(
-        [middleware2, middlewareThrowsError, middleware1],
-        [middleware3]
+        [ middleware2, middlewareThrowsError, middleware1 ],
+        [ middleware3 ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -461,15 +465,16 @@ describe('Run Middlewares By App Type Tests', function () {
               'initialMiddleware',
               'middleware2',
               'middlewareThrowsError',
-              'errorMiddleware',
+              'errorMiddleware'
             ]);
           chai.expect(res.status).to.be.eql(400);
         }, done)
       );
   });
 
-  it(`When modified the request in one of the middlewares selected, then see the request 
-    modified in the middlewares outside the conditional middleware.`, function (done) {
+  it(`When modified the request in one of the middlewares selected, then see 
+    the request modified in the middlewares outside the conditional 
+    middleware.`, (done) => {
     initialMiddleware = (req, res, next) => {
       req.test = 'init';
       next();
@@ -492,8 +497,8 @@ describe('Run Middlewares By App Type Tests', function () {
       '/',
       initialMiddleware,
       condition(() => true)(
-        [middlewareModifyRequest1, middlewareModifyRequest2, middleware1],
-        [middleware3]
+        [ middlewareModifyRequest1, middlewareModifyRequest2, middleware1 ],
+        [ middleware3 ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -510,14 +515,14 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When multiples middlewares are passed, then only execute the middlewares 
-    that were selected.`, function (done) {
+    that were selected.`, (done) => {
     const app = express().get(
       '/',
       initialMiddleware,
       condition(() => true)(
-        [middleware3],
-        [middleware2, middleware1],
-        [asyncMiddleware]
+        [ middleware3 ],
+        [ middleware2, middleware1 ],
+        [ asyncMiddleware ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -539,7 +544,7 @@ describe('Run Middlewares By App Type Tests', function () {
   });
 
   it(`When multiples conditional middlewares are nested, then execute the conditions 
-    that match.`, function (done) {
+    that match.`, (done) => {
     const middlewareModifyRequest1 = sandbox.spy((req, res, next) => {
       req.test = 1;
       next();
@@ -551,12 +556,12 @@ describe('Run Middlewares By App Type Tests', function () {
         [
           middlewareModifyRequest1,
           condition((req: any) => req.test)(
-            [middleware2, middleware1],
-            [middleware3]
-          ),
+            [ middleware2, middleware1 ],
+            [ middleware3 ]
+          )
         ],
-        [middleware2, middleware1],
-        [asyncMiddleware]
+        [ middleware2, middleware1 ],
+        [ asyncMiddleware ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -577,8 +582,8 @@ describe('Run Middlewares By App Type Tests', function () {
       );
   });
 
-  it(`When multiple requests are executed in a flow that has a middleware that performs 
-    an async operation, then don't block the process.`, async function () {
+  it(`When multiple requests are executed in a flow that has a middleware that 
+    performs an async operation, then don't block the process.`, async () => {
     const asyncMiddlewareLonger = sandbox.spy(async (req, res, next) => {
       callOrder.push('asyncMiddlewareLonger - start');
       await getAsyncTask(1000, 'asyncMiddlewareLonger - end');
@@ -593,8 +598,8 @@ describe('Run Middlewares By App Type Tests', function () {
       '/',
       initialMiddleware,
       condition((req) => +req.query.i)(
-        [asyncMiddlewareLonger],
-        [asyncMiddlewareLower]
+        [ asyncMiddlewareLonger ],
+        [ asyncMiddlewareLower ]
       ),
       finalMiddleware,
       errorMiddleware
@@ -602,7 +607,7 @@ describe('Run Middlewares By App Type Tests', function () {
 
     await Promise.all([
       request(app).get('/').query({ i: 0 }),
-      request(app).get('/').query({ i: 1 }),
+      request(app).get('/').query({ i: 1 })
     ]);
 
     chai
@@ -615,7 +620,7 @@ describe('Run Middlewares By App Type Tests', function () {
         'asyncMiddlewareLower - end',
         'finalMiddleware',
         'asyncMiddlewareLonger - end',
-        'finalMiddleware',
+        'finalMiddleware'
       ]);
   });
 });
