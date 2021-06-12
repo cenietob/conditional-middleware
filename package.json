@@ -14,7 +14,7 @@
     }
   ],
   "scripts": {
-    "prepare": "npx husky install && npm run build",
+    "prepare": "npx husky install",
     "test": "nyc mocha",
     "posttest": "nyc report --reporter=json",
     "build": "tsc",
