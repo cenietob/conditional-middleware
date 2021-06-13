@@ -65,7 +65,7 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    environment: production_environment
+    environment: PRODUCTION
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -78,7 +78,7 @@ jobs:
           name: build.zip
       - name: Unzip build.zip
         run: unzip -q build.zip
-      - run: npm publish 
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_API_KEY}}
 
@@ -86,7 +86,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.repository_owner == 'cenietob'
-    environment: production_environment
+    environment: PRODUCTION
     permissions:
       contents: read
       packages: write
