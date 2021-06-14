@@ -78,9 +78,9 @@ jobs:
           name: build.zip
       - name: Unzip build.zip
         run: unzip -q build.zip
-      - run: npm publish 
+      - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_API_KEY}}
+          NODE_AUTH_TOKEN: ${{secrets.PUBLISH_NPM_TOKEN}}
 
   publish-gpr:
     needs: build
@@ -112,8 +112,9 @@ jobs:
       - name: Store package name
         run: |
           echo 'package_name<<EOF' >> $GITHUB_ENV
-          grep -Po '"name": *\K"[^"]*"' package.json | grep -oP '"\K[^"\047]+(?=["\047])' >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV  
+          grep -m 1 -Po '"name": *\K"[^"]*"' package.json | sed 's/"//g' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
       - name: Update Package Name
         run: |
           sed -i 's,"name": "${{ env.package_name }}","name": "@${{ env.actor_name }}/${{ env.package_name }}",' package.json

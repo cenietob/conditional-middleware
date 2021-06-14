@@ -1,6 +1,6 @@
 {
   "name": "condition-middleware",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Conditional middleware",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
